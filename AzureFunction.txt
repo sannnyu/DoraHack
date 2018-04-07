@@ -1,0 +1,79 @@
+using System.Net;
+using System.IO;
+
+public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log)
+{
+    
+
+    string location="";
+    string temp = req.GetQueryNameValuePairs()
+        .FirstOrDefault(q => string.Compare(q.Key, "temp", true) == 0)
+        .Value;
+    string sensor=req.GetQueryNameValuePairs()
+        .FirstOrDefault(q=> string.Compare(q.Key,"sensor",true)==0)
+        .Value;
+    string id=req.GetQueryNameValuePairs()
+        .FirstOrDefault(q=> string.Compare(q.Key,"id",true)==0)
+        .Value;
+
+
+    if(id=="1")
+    {
+        location="湖北省武汉市洪山区现代光谷世贸中心";
+    }
+    else if(id=="2")
+    {
+        location="北京市微软亚洲研究院";
+    }
+    else if(id=="3")
+    {
+        location="华中科技大学";
+    }
+    else
+    {
+        location="青青草原";
+    }
+
+    // if (temp == null)
+    // {
+    //     // Get request body
+    //     dynamic data = await req.Content.ReadAsAsync<object>();
+    //     temp = data?.temp;
+    // }
+
+
+    string con = "https://prod-24.westus.logic.azure.com:443/workflows/5a805b46998a4df3870a181c3251d089/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=a3eZXQ7wbNX7f4qn4Oa-DGCuXOkupn5qeJflvUq7vtM";
+
+
+    string datas="{\n\t\"Temp\":\""+temp+"\",\n\t\"sensor\":\""+sensor+"\",\n\t\"id\":\""+id+"\"\n}";
+
+
+
+
+    var request = WebRequest.Create(con);
+    request.ContentType = "application/json";
+    request.Method = "POST";
+    if(sensor!="")
+    {
+        using (var requestStream =await request.GetRequestStreamAsync())
+        {
+            var writer = new StreamWriter(requestStream);
+            writer.Write(datas);
+            writer.Flush();
+
+        }
+        using (var resp = await request.GetResponseAsync())
+        {
+            using (var responseStream = resp.GetResponseStream())
+            {
+                var reader = new StreamReader(responseStream);
+                var result = reader.ReadToEnd();
+                //temp=result.ToString();
+            }
+        }
+    
+    }
+
+
+    return temp == null? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body"): req.CreateResponse(HttpStatusCode.OK, "Hello,Temperature: " + temp + "\t Sensor State ："+sensor + "\t id:"+id+"\t "+location);
+}

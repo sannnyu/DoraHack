@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<toast launch="action=viewRestaurant&amp;restaurantId=92187">
+
+    <visual>
+        <binding template="ToastGeneric">
+            <image placement="hero" src="Assets/office.jpg"/>
+            <text hint-maxLines="1">感谢DoraHack，终于做完啦</text>
+            <text>DoraHacks真是太棒了</text>
+            <image src="Assets/world.png"/>
+            <group>
+                <subgroup>
+                    <text hint-style="body">Great Dora Hacks</text>
+                    <text hint-style="captionSubtle">温度：19.2</text>
+                </subgroup>
+                <subgroup hint-textStacking="bottom">
+                    <text hint-style="captionSubtle" hint-wrap="true" hint-align="right">湖北省武汉市洪山区现代光谷世贸中心</text>
+                </subgroup>
+            </group>
+        </binding>
+    </visual>
+
+    <actions>
+
+        <action
+          content="Map"
+          arguments="bingmaps:?q=湖北省武汉市洪山区现代光谷世贸中心"
+          activationType="protocol"/>
+
+        <action
+          content="Reviews"
+          arguments="action=viewRestaurantReviews&amp;restaurantId=92187"/>
+
+    </actions>
+
+</toast>
